@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "bloomyexperience",
+	"version": "${version}",
+	"name": "Bloomy Experience",
+	"description": "This is mod is part of the Bloomy Modpack and aims to enhance the LevelZ experience system to be more balanced within the modpack!",
+	"authors": [
+		"toent!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/bloomyexperience/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"nl.toent.bloomyexperience.BloomyExperience"
+		],
+		"client": [
+			"nl.toent.bloomyexperience.BloomyExperienceClient"
+		],
+		"fabric-datagen": [
+			"nl.toent.bloomyexperience.BloomyExperienceDataGenerator"
+		]
+	},
+	"mixins": [
+		"bloomyexperience.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

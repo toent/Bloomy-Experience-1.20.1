@@ -20,6 +20,8 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -27,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.levelz.entity.LevelExperienceOrbEntity;
 
 import java.io.Console;
 
@@ -44,17 +47,7 @@ public class BloomyExperience implements ModInitializer {
 				Block minedBlock = blockState.getBlock();
 
 				if (isCorrectTool(player, blockState)) {
-					serverPlayer.sendMessage(
-							Text.literal("Block: " + minedBlock + " received!" + blockPos).formatted(Formatting.AQUA),
-							false
-					);
-					spawnExp(world, blockPos, experienceAmount);
-				} else {
-					// If the player uses the wrong tool, show a message
-					serverPlayer.sendMessage(
-							Text.literal("You need the correct tool to break this block!").formatted(Formatting.RED),
-							false
-					);
+					spawnExp(world, experienceAmount, player);
 				}
 
 			}
@@ -65,30 +58,23 @@ public class BloomyExperience implements ModInitializer {
 		Item itemInHand = player.getMainHandStack().getItem();
 
 		if (itemInHand instanceof ToolItem tool) {
-			player.sendMessage(
-					Text.literal("block mining level: " + MiningLevelManager.getRequiredMiningLevel(blockState)).formatted(Formatting.GOLD),
-					false
-			);
-
-			player.sendMessage(
-					Text.literal("tool mining level: " + tool.getMaterial().getMiningLevel()).formatted(Formatting.GOLD),
-					false
-			);
 
 			return tool.isSuitableFor(blockState) && MiningLevelManager.getRequiredMiningLevel(blockState) <= tool.getMaterial().getMiningLevel();
 		}
 		return false; // If the item is not a tool, return false
 	}
 
-	private void spawnExp(World world, BlockPos pos, int experienceAmount) {
+	private void spawnExp(World world, int experienceAmount, PlayerEntity player) {
 //		random maximum
 		int randMax = 10;
 //		random odds 0.5 -> 50% chance
-		float randOdds = 0.2f;
+		float randOdds = 0.25f;
 		float randomNumber = (float) (Math.random() * randMax);
 
 		if(randomNumber > randMax*(1-randOdds)){
-			ExperienceOrbEntity exp = new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), experienceAmount);
+			LevelExperienceOrbEntity levelExp = new LevelExperienceOrbEntity(world, player.getX(), player.getY(), player.getZ(), experienceAmount);
+			ExperienceOrbEntity exp = new ExperienceOrbEntity(world, player.getX(), player.getY(), player.getZ(), 0 );
+			world.spawnEntity(levelExp);
 			world.spawnEntity(exp);
 		}
 	}
